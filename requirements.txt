@@ -5,3 +5,10 @@ roboflow>=1.1.0
 opencv-python>=4.9.0
 numpy>=1.26.0
 matplotlib>=3.8.0
+pymongo
+streamlit
+pandas 
+plotly 
+pillow
+paho-mqtt
+streamlit_autorefresh
