@@ -46,9 +46,9 @@ mqtt_client.tls_insecure_set(True)
 try:
     mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
     mqtt_client.loop_start()
-    print(f"✅ Connected securely to HiveMQ Cloud at {MQTT_BROKER}:{MQTT_PORT}")
+    print(f" Connected securely to HiveMQ Cloud at {MQTT_BROKER}:{MQTT_PORT}")
 except Exception as e:
-    print(f"❌ Could not connect to MQTT broker: {e}")
+    print(f" Could not connect to MQTT broker: {e}")
     mqtt_client = None
 # --------------------------------------
 # 🔹 YOLO Model Load
@@ -64,7 +64,7 @@ model = load_model()
 # --------------------------------------
 # 🔹 Streamlit UI Setup
 # --------------------------------------
-st.title("🧠 Real-Time Bridge Crack Detection (MQTT)")
+st.title(" Real-Time Bridge Crack Detection (MQTT)")
 st.markdown("YOLOv8 + MQTT Integration • Live Feed + MongoDB Logging")
 
 mode = st.sidebar.radio("Video Source", ["Webcam", "Upload Video"])

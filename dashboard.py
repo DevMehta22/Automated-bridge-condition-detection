@@ -1,5 +1,5 @@
 # ======================================
-# 🌉 Unified Bridge Monitoring Dashboard (Streamlit + MQTT + MongoDB)
+#  Unified Bridge Monitoring Dashboard (Streamlit + MQTT + MongoDB)
 # ======================================
 import streamlit as st
 import pandas as pd
@@ -35,7 +35,7 @@ fs_chunks = db["fs.chunks"]
 
 # ---------------- STREAMLIT CONFIG ----------------
 st.set_page_config(page_title="Bridge Monitoring Dashboard", layout="wide")
-st.title("🌉 Bridge Health & Crack Detection Dashboard")
+st.title(" Bridge Health & Crack Detection Dashboard")
 st.markdown("#### Real-time monitoring of cracks, vibration, and water levels via MQTT + MongoDB")
 st.markdown("---")
 
@@ -94,7 +94,7 @@ if "mqtt_thread_started" not in st.session_state:
     mqtt_thread = threading.Thread(target=start_mqtt_listener, daemon=True)
     mqtt_thread.start()
     st.session_state["mqtt_thread_started"] = True
-    st.sidebar.success("✅ MQTT listener started in background")
+    st.sidebar.success(" MQTT listener started in background")
 
 # ----------------- Load detections -----------------
 data = list(detections.find())
@@ -115,7 +115,7 @@ else:
     df["time"] = df["timestamp"].dt.time
 
 # ---------------- Sidebar filters ----------------
-st.sidebar.header("📊 Filters")
+st.sidebar.header(" Filters")
 if not df.empty:
     labels = sorted(df["label"].dropna().unique())
     sources = sorted(df["video_source"].dropna().unique())
@@ -151,15 +151,15 @@ else:
 if filtered_df.empty:
     st.info("No crack records match your filters or no detections yet.")
 else:
-    st.subheader("🔍 Crack Detection Summary")
+    st.subheader(" Crack Detection Summary")
     col1, col2, col3 = st.columns(3)
-    col1.metric("📸 Total Detections", len(filtered_df))
-    col2.metric("🚨 Severe Cracks", len(filtered_df[filtered_df["label"] == "severe crack"]))
+    col1.metric(" Total Detections", len(filtered_df))
+    col2.metric(" Severe Cracks", len(filtered_df[filtered_df["label"] == "severe crack"]))
     avg_conf = filtered_df["confidence"].mean() if not filtered_df["confidence"].isnull().all() else 0.0
     col3.metric("🎯 Avg Confidence", f"{avg_conf:.2f}")
 
     st.markdown("---")
-    st.subheader("📈 Crack Detections Over Time (by Source)")
+    st.subheader(" Crack Detections Over Time (by Source)")
     grouped = (
         filtered_df.groupby(["video_source", "date", "label"])
         .size()
@@ -180,7 +180,7 @@ else:
         st.plotly_chart(fig_time, use_container_width=True)
 
     st.markdown("---")
-    st.subheader("🎯 Confidence Distribution by Source")
+    st.subheader(" Confidence Distribution by Source")
     fig_conf = px.histogram(
         filtered_df,
         x="confidence",
@@ -192,12 +192,12 @@ else:
     st.plotly_chart(fig_conf, use_container_width=True)
 
     st.markdown("---")
-    st.subheader("🧩 Detection Class Breakdown")
+    st.subheader(" Detection Class Breakdown")
     fig_pie = px.pie(filtered_df, names="label", title="Crack vs Severe Crack Ratio")
     st.plotly_chart(fig_pie, use_container_width=True)
 
     st.markdown("---")
-    st.subheader("🖼️ Recent Severe Crack Detections")
+    st.subheader(" Recent Severe Crack Detections")
     severe_df = (
         filtered_df[filtered_df["label"].str.lower() == "severe crack"]
         .sort_values("timestamp", ascending=False)
@@ -219,7 +219,7 @@ else:
                 _id = ObjectId(image_id) if not isinstance(image_id, ObjectId) else image_id
                 file_doc = fs_files.find_one({"_id": _id})
                 if not file_doc:
-                    cols[i % 3].warning("⚠️ Image not found in GridFS.")
+                    cols[i % 3].warning(" Image not found in GridFS.")
                     continue
 
                 chunks = fs_chunks.find({"files_id": _id}).sort("n", 1)
@@ -232,10 +232,10 @@ else:
                     use_column_width=True,
                 )
             except Exception as e:
-                cols[i % 3].error(f"❌ Error loading image: {e}")
+                cols[i % 3].error(f" Error loading image: {e}")
 
     st.markdown("---")
-    st.subheader("🕒 Recent 10 Crack Detections")
+    st.subheader(" Recent 10 Crack Detections")
     recent = filtered_df.sort_values("timestamp", ascending=False).head(10)
     st.dataframe(
         recent[["timestamp", "video_source", "label", "confidence", "frame_id"]],
@@ -244,7 +244,7 @@ else:
 
 # ---------------- ALERTS SECTION ----------------
 st.markdown("---")
-st.header("🚨 Real-Time Alerts (Water Level & Vibration)")
+st.header(" Real-Time Alerts (Water Level & Vibration)")
 
 alert_data = list(alerts.find().sort("timestamp", -1).limit(100))
 if not alert_data:
@@ -259,11 +259,11 @@ else:
     col2.metric("Last Alert", alert_df["alert_type"].iloc[0])
     col3.metric("Last Seen", alert_df["timestamp"].iloc[0].strftime("%Y-%m-%d %H:%M:%S"))
 
-    st.subheader("📋 Latest Alerts")
+    st.subheader(" Latest Alerts")
     st.dataframe(alert_df[["timestamp", "alert_type", "value", "device_id"]], use_container_width=True)
 
     st.markdown("---")
-    st.subheader("📊 Alert Frequency Over Time")
+    st.subheader(" Alert Frequency Over Time")
     grouped_alerts = (
         alert_df.groupby(["date", "alert_type"])
         .size()
@@ -282,7 +282,7 @@ else:
 # ---------------- FUSED TIMELINE ----------------
 if ("grouped" in locals() and not grouped.empty) and (not alert_data == []):
     st.markdown("---")
-    st.subheader("🧩 Combined Crack & Sensor Alert Timeline")
+    st.subheader(" Combined Crack & Sensor Alert Timeline")
 
     grouped_combined = pd.concat([
         grouped.rename(columns={"label": "event_type", "count": "events"})[["date", "event_type", "events"]],
@@ -297,4 +297,4 @@ if ("grouped" in locals() and not grouped.empty) and (not alert_data == []):
     st.plotly_chart(fig_combined, use_container_width=True)
 
 st.markdown("---")
-st.caption("📊 Data Source: MongoDB `bridge_monitoring` database")
+st.caption(" Data Source: MongoDB `bridge_monitoring` database")
